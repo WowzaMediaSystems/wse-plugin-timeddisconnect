@@ -1,5 +1,5 @@
-# wse-plugin-moduletimeddisconnect
-BanStreams is a module for [Wowza Streaming Engine™ media server software](https://www.wowza.com/products/streaming-engine) that allows you the ability to disconnect clients after a specified amount of time.
+# wse-plugin-timeddisconnect
+TimedDisconnect is a module for [Wowza Streaming Engine™ media server software](https://www.wowza.com/products/streaming-engine) that allows you the ability to disconnect clients after a specified amount of time.
 
 ## Prerequisites
 
