@@ -17,7 +17,7 @@ import com.wowza.wms.logging.WMSLoggerIDs;
 import com.wowza.wms.module.ModuleBase;
 import com.wowza.wms.rtp.model.RTPSession;
 
-public class ModuleTimedDisconnect extends ModuleBase
+public class TimedDisconnect extends ModuleBase
 {
 
 	private class Disconnecter extends TimerTask
