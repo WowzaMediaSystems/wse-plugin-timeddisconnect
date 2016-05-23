@@ -1,5 +1,6 @@
-/**
- * Wowza server software and all components Copyright 2006 - 2015, Wowza Media Systems, LLC, licensed pursuant to the Wowza Media Software End User License Agreement.
+/*
+ * This code and all components (c) Copyright 2006 - 2016, Wowza Media Systems, LLC. All rights reserved.
+ * This code is licensed pursuant to the Wowza Public License version 1.0, available at www.wowza.com/legal.
  */
 package com.wowza.wms.plugin;
 
@@ -17,7 +18,7 @@ import com.wowza.wms.logging.WMSLoggerIDs;
 import com.wowza.wms.module.ModuleBase;
 import com.wowza.wms.rtp.model.RTPSession;
 
-public class TimedDisconnect extends ModuleBase
+public class ModuleTimedDisconnect extends ModuleBase
 {
 
 	private class Disconnecter extends TimerTask
