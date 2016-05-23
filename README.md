@@ -1,4 +1,4 @@
-# wse-plugin-timeddisconnect
+# Timed Disconnect Module
 TimedDisconnect is a module for [Wowza Streaming Engine™ media server software](https://www.wowza.com/products/streaming-engine) that allows you the ability to disconnect clients after a specified amount of time.
 
 ## Prerequisites
@@ -29,4 +29,4 @@ To use the compiled version of this module, see [How to disconnect players after
 
 ## License
 
-This code is distributed under the [Wowza Public License](https://github.com/WowzaMediaSystems/[jar-file-name]/blob/master/LICENSE.txt).
+This code is distributed under the [Wowza Public License](https://github.com/WowzaMediaSystems/wse-plugin-timeddisconnect/blob/master/LICENSE.txt).
