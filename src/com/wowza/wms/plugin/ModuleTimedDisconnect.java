@@ -1,5 +1,5 @@
 /*
- * This code and all components (c) Copyright 2006 - 2016, Wowza Media Systems, LLC. All rights reserved.
+ * This code and all components (c) Copyright 2006 - 2019, Wowza Media Systems, LLC. All rights reserved.
  * This code is licensed pursuant to the Wowza Public License version 1.0, available at www.wowza.com/legal.
  */
 package com.wowza.wms.plugin;
@@ -7,6 +7,7 @@ package com.wowza.wms.plugin;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
 
 import com.wowza.util.StringUtils;
 import com.wowza.wms.application.IApplicationInstance;
@@ -54,6 +55,10 @@ public class ModuleTimedDisconnect extends ModuleBase
 							logger.info(MODULE_NAME + ": HTTP disconnecting session " + httpSession.getSessionId(), WMSLoggerIDs.CAT_application, WMSLoggerIDs.EVT_comment);
 
 						httpSession.rejectSession();
+						synchronized(sessionCache)
+						{
+							sessionCache.put(System.currentTimeMillis(), httpSession.getSessionId());
+						}
 					}
 				}
 			}
@@ -73,6 +78,24 @@ public class ModuleTimedDisconnect extends ModuleBase
 					}
 				}
 			}
+			
+			// clear expired values from sessionCache
+			long limit = System.currentTimeMillis() - sessionCacheDuration;
+			synchronized(sessionCache)
+			{
+				Iterator<Long> iter = sessionCache.keySet().iterator();
+				while (iter.hasNext())
+				{
+					if (iter.next() <= limit)
+					{
+						iter.remove();
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -86,6 +109,8 @@ public class ModuleTimedDisconnect extends ModuleBase
 	private String allowedAgents = "";
 	private boolean debugLog = false;
 	private WMSLogger logger = null;
+	private TreeMap<Long, String> sessionCache = new TreeMap<Long, String>();
+	private long sessionCacheDuration = 600000; // 10 minutes
 
 	public void onAppStart(IApplicationInstance appInstance)
 	{
@@ -94,13 +119,14 @@ public class ModuleTimedDisconnect extends ModuleBase
 		this.disconnectTime = appInstance.getProperties().getPropertyInt(PROP_NAME_PREFIX + "Time", this.disconnectTime);
 		this.allowedIps = appInstance.getProperties().getPropertyStr(PROP_NAME_PREFIX + "AllowedIPs", this.allowedIps);
 		this.allowedAgents = appInstance.getProperties().getPropertyStr(PROP_NAME_PREFIX + "AllowedAgents", this.allowedAgents);
+		this.sessionCacheDuration = appInstance.getProperties().getPropertyLong(PROP_NAME_PREFIX + "SessionCacheDuration", this.sessionCacheDuration);
 		this.debugLog = appInstance.getProperties().getPropertyBoolean(PROP_NAME_PREFIX + "DebugLog", this.debugLog);
 		if (logger.isDebugEnabled())
 		{
 			this.debugLog = true;
 		}
 		
-		logger.info(MODULE_NAME + " Started  [" + appInstance.getContextStr() + " disconnectTime: "+ this.disconnectTime + ", ignoredAgents: " + this.allowedAgents + ", debugLog: " + this.debugLog + "]", WMSLoggerIDs.CAT_application, WMSLoggerIDs.EVT_comment);
+		logger.info(MODULE_NAME + " Started [" + appInstance.getContextStr() + " build #2, disconnectTime: "+ this.disconnectTime + ", ignoredAgents: " + this.allowedAgents + ", sessionCacheDuration: " + this.sessionCacheDuration + ", debugLog: " + this.debugLog + "]", WMSLoggerIDs.CAT_application, WMSLoggerIDs.EVT_comment);
 
 		this.timer = new Timer(MODULE_NAME + " [" + appInstance.getContextStr() + "]");
 		timer.schedule(new Disconnecter(), 0, 1000);
@@ -115,6 +141,18 @@ public class ModuleTimedDisconnect extends ModuleBase
 			timer.cancel();
 		}
 		timer = null;
+	}
+	
+	public void onHTTPSessionCreate(IHTTPStreamerSession httpSession)
+	{
+		synchronized(sessionCache)
+		{
+			if (sessionCache.values().contains(httpSession.getSessionId()))
+			{
+				httpSession.rejectSession();
+				httpSession.setDeleteSession();
+			}
+		}
 	}
 
 	private boolean checkAllowedIPAddress(String ip)

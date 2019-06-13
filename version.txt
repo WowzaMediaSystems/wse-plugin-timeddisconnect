@@ -1,0 +1,4 @@
+Build 2
+	* Added session id caching to prevent players reconnecting immediately with the same session id
+Build 1
+	* initial commit
