@@ -10,8 +10,8 @@ Wowza Streaming Engine 4.0.0 or later is required.
 This module provides the following functionality:
 
 * Disconnect RTSP, RTMP, and HTTP clients.
-* Whitelist specific IP addresses to remain uncontrolled by timer.
-* Whitelist specific user agents to remain uncontrolled by timer.
+* Allowlist specific IP addresses to remain uncontrolled by timer.
+* Allowlist specific user agents to remain uncontrolled by timer.
 
 ## More resources
 To use the compiled version of this module, see [Disconnect connected clients after a specified time period with a Wowza Streaming Engine Java module](https://www.wowza.com/docs/how-to-disconnect-connected-clients-after-a-specified-time-period-moduletimeddisconnect).
